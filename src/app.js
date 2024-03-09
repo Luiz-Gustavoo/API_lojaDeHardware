@@ -1,8 +1,3 @@
-/*
-esse arquivo faz a conexão com o banco de dados
-
- */
-
 import express from 'express';
 import conectarDatabase from './config/dbConnect.js';
 import routes from './config/routes/produtoRoutes.js';
