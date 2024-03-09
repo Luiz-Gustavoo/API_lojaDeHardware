@@ -1,6 +1,5 @@
-/*
-esse arquivo serve para iniciar o servidor express
-*/
+import "dotenv/config";
+
 
 import app from './src/app.js';
 
