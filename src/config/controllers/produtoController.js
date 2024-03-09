@@ -1,4 +1,5 @@
 import produto from "../models/Produto.js";
+import mongoose from "mongoose";
 
 const listarTodosProdutos = async (req, res) => {
     try {
@@ -13,9 +14,21 @@ const listarProdutoPorId = async (req, res) => {
     try {
         const id = req.params.id;
         const produtoEncontrado = await produto.findById(id);
-        res.status(200).json(produtoEncontrado);
+
+        if (produtoEncontrado !== null) {
+            res.status(200).json(produtoEncontrado);
+        }
+        else {
+            res.status(400).send({message: "ID do produto não encontrado"});
+        }
+        
     } catch(error) {
-        res.status(500).json({message: `${error.message} -- Falha na requisição do produto`});
+        if (error instanceof mongoose.Error.CastError) {
+            res.status(400).send({message: "Um ou mais dados fornecidos estão incorretos"});
+        } else {
+            res.status(500).json({message: `${error.message} -- Falha na requisição do produto`});
+        }
+        
     }
 }
 
