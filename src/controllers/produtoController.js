@@ -1,12 +1,12 @@
 import produto from "../models/Produto.js";
 
 
-const listarTodosProdutos = async (req, res) => {
+const listarTodosProdutos = async (req, res, next) => {
   try {
     const listaProdutos = await produto.find({});
     res.status(200).json(listaProdutos);
-  } catch(error) {
-    res.status(500).json({message: `${error.message} -- Falha na requisição dos produtos`});
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -22,38 +22,38 @@ const listarProdutoPorId = async (req, res, next) => {
       res.status(400).send({message: "ID do produto não encontrado"});
     }
         
-  } catch (error) {
+  } catch(error) {
     next(error);
         
   }
 };
 
-const cadastrarProduto = async (req, res) => {
+const cadastrarProduto = async (req, res, next) => {
   try {
     const novoProduto = await produto.create(req.body);
     res.status(201).json({message: "Produto criado com sucesso", produto: novoProduto});
   } catch(error) {
-    res.status(500).json({message: `${error.message} -- Falha ao cadastrar produto`});
+    next(error);
   }
 };
 
-const atualizarProduto = async (req, res) => {
+const atualizarProduto = async (req, res, next) => {
   try {
     const id = req.params.id;
     await produto.findByIdAndUpdate(id, req.body);
     res.status(200).json({message: "Produto alterado com sucesso"});
   } catch(error) {
-    res.status(500).json({message: `${error.message} -- Falha ao cadastrar produto`});
+    next(error);
   }
 };
 
-const deletarProduto = async (req, res) => {
+const deletarProduto = async (req, res, next) => {
   try {
     const id = req.params.id;
     await produto.findByIdAndDelete(id);
     res.status(200).json({message: "Produto deletado com sucesso"});
   } catch(error) {
-    res.status(500).json({message: `${error.message} -- Falha ao deletar produto`});
+    next(error);
   }
 };
 
