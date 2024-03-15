@@ -9,7 +9,7 @@ function ManipuladorDeErros(error, req, res, next) {
   else if (error instanceof mongoose.Error.ValidationError) {
     let mensagensErro = "";
     for (let erro in error.errors) {
-      mensagensErro += `mensagemErro: ${error.errors[erro].message + "; "}`;
+      mensagensErro += `${error.errors[erro].message + "; "}`;
     }
     res.status(400).send({mensagem: `Os seguintes erros foram encontrados: ${mensagensErro}`});
     
