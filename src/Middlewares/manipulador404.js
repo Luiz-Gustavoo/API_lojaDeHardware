@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-function manipulador404(req, res, next) {
-  res.status(404).send({mensagem: "Página não encontrada"});
+function naoEncontrado(req, res, next, mensagem = "Página não encontrada", status = 404) {
+  res.status(status).send({mensagem: mensagem});
 }
 
-export default manipulador404;
+export default naoEncontrado;
