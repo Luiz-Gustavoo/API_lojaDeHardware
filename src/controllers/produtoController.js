@@ -1,5 +1,5 @@
 import produto from "../models/Produto.js";
-
+import naoEncontrado from "../Middlewares/manipulador404.js";
 
 const listarTodosProdutos = async (req, res, next) => {
   try {
@@ -19,7 +19,8 @@ const listarProdutoPorId = async (req, res, next) => {
       res.status(200).json(produtoEncontrado);
     }
     else {
-      res.status(400).send({message: "ID do produto não encontrado"});
+      naoEncontrado(req, res, next, "ID do produto não encontrado", 400);
+      
     }
         
   } catch(error) {
@@ -40,8 +41,16 @@ const cadastrarProduto = async (req, res, next) => {
 const atualizarProduto = async (req, res, next) => {
   try {
     const id = req.params.id;
-    await produto.findByIdAndUpdate(id, req.body);
-    res.status(200).json({message: "Produto alterado com sucesso"});
+    const produtoAlterado = await produto.findByIdAndUpdate(id, req.body);
+
+    if (produtoAlterado !== null) {
+      res.status(200).json({message: "Produto alterado com sucesso"});
+    }
+    else {
+      naoEncontrado(req, res, next, "Produto não encontrado para alteração", 400);
+    }
+
+    
   } catch(error) {
     next(error);
   }
@@ -50,8 +59,14 @@ const atualizarProduto = async (req, res, next) => {
 const deletarProduto = async (req, res, next) => {
   try {
     const id = req.params.id;
-    await produto.findByIdAndDelete(id);
-    res.status(200).json({message: "Produto deletado com sucesso"});
+    const produtoDeletado = await produto.findByIdAndDelete(id);
+
+    if (produtoDeletado !== null) {
+      res.status(200).json({message: "Produto deletado com sucesso"});
+    }
+    else {
+      naoEncontrado(req, res, next, "Produto não encontrado para exclusão", 400);
+    }
   } catch(error) {
     next(error);
   }
