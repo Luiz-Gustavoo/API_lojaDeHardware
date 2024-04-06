@@ -29,6 +29,28 @@ const listarProdutoPorId = async (req, res, next) => {
   }
 };
 
+const listarProdutoPorFiltro = async (req, res, next) => {
+  try {
+    const {nome, marca} = req.query;
+
+    const busca = {};
+
+    if (nome) busca.nome = nome;
+    if (marca) busca.marca = marca;
+
+    const produtoEncontrado = await produto.find(busca);
+
+    if (!produtoEncontrado !== null) {
+      res.status(200).json(produtoEncontrado);
+    }
+    else {
+      naoEncontrado(req, res, next, "Produto não encontrado com esses filtros", 400);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const cadastrarProduto = async (req, res, next) => {
   try {
     const novoProduto = await produto.create(req.body);
@@ -75,6 +97,7 @@ const deletarProduto = async (req, res, next) => {
 export default {
   listarTodosProdutos,
   listarProdutoPorId,
+  listarProdutoPorFiltro,
   cadastrarProduto,
   atualizarProduto,
   deletarProduto
