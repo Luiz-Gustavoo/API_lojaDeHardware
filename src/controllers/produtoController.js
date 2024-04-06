@@ -1,4 +1,4 @@
-import produto from "../models/Produto.js";
+import {produto} from "../models/index.js";
 import naoEncontrado from "../Middlewares/manipulador404.js";
 
 const listarTodosProdutos = async (req, res, next) => {
