@@ -31,12 +31,17 @@ const listarProdutoPorId = async (req, res, next) => {
 
 const listarProdutoPorFiltro = async (req, res, next) => {
   try {
-    const {nome, marca} = req.query;
+    const {nome, marca, categoria, minPreco, maxPreco} = req.query;
 
     const busca = {};
 
     if (nome) busca.nome = {$regex: nome, $options: "i"};
-    if (marca) busca.marca = marca;
+    if (marca) busca.marca = {$regex: marca, $options: "i"};
+    if (categoria) busca.categoria = {$regex: categoria, $options: "i"};
+
+    if (minPreco || maxPreco) busca.preco = {};
+    if (minPreco) busca.preco.$gte = minPreco;
+    if (maxPreco) busca.preco.$lte = maxPreco;
 
     const produtoEncontrado = await produto.find(busca);
 
