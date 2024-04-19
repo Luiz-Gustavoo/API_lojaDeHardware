@@ -10,7 +10,7 @@ const listarTodosProdutos = async (req, res, next) => {
     pagina = parseInt(pagina);
     limite = parseInt(limite);
 
-    if (pagina > 1 && limite> 1) {
+    if (pagina > 0 && limite > 0) {
       const listaProdutos = await produto
         .find()
         .skip((pagina - 1) * limite)
