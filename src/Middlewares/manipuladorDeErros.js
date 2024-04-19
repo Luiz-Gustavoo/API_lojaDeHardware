@@ -1,10 +1,10 @@
-
+import requisicaoIncorreta from "../errors/RequisicaoIncorreta.js";
 import mongoose from "mongoose";
 
 // eslint-disable-next-line no-unused-vars
 function ManipuladorDeErros(error, req, res, next) {
   if (error instanceof mongoose.Error.CastError) {
-    res.status(400).send({mensagem: "Um ou mais dados fornecidos estão incorretos.", status: 400});
+    requisicaoIncorreta(req, res, next);
   } 
   else if (error instanceof mongoose.Error.ValidationError) {
     let mensagensErro = "";
