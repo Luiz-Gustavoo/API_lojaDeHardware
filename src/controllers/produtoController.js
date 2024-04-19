@@ -1,10 +1,26 @@
 import {produto} from "../models/index.js";
 import naoEncontrado from "../Middlewares/manipulador404.js";
+import requisicaoIncorreta from "../errors/RequisicaoIncorreta.js";
 
 const listarTodosProdutos = async (req, res, next) => {
   try {
-    const listaProdutos = await produto.find({});
-    res.status(200).json(listaProdutos);
+
+    let {pagina = 1, limite = 3} = req.query;
+
+    pagina = parseInt(pagina);
+    limite = parseInt(limite);
+
+    if (pagina > 1 && limite> 1) {
+      const listaProdutos = await produto
+        .find()
+        .skip((pagina - 1) * limite)
+        .limit(limite);
+      
+      res.status(200).json(listaProdutos);
+    } else {
+      requisicaoIncorreta(req, res, next, "Dados da paginação incorretos", 400);
+    }
+    
   } catch (error) {
     next(error);
   }
