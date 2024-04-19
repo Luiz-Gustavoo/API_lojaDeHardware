@@ -35,12 +35,12 @@ const listarProdutoPorFiltro = async (req, res, next) => {
 
     const busca = {};
 
-    if (nome) busca.nome = nome;
+    if (nome) busca.nome = {$regex: nome, $options: "i"};
     if (marca) busca.marca = marca;
 
     const produtoEncontrado = await produto.find(busca);
 
-    if (!produtoEncontrado !== null) {
+    if (produtoEncontrado.length !== 0) {
       res.status(200).json(produtoEncontrado);
     }
     else {
