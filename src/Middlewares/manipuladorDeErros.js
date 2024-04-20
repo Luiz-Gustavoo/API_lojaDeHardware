@@ -1,4 +1,6 @@
 import requisicaoIncorreta from "../errors/RequisicaoIncorreta.js";
+import erroBase from "../errors/ErroBase.js";
+import erroValidacao from "../errors/ErroValidacao.js";
 import mongoose from "mongoose";
 
 // eslint-disable-next-line no-unused-vars
@@ -7,14 +9,9 @@ function ManipuladorDeErros(error, req, res, next) {
     requisicaoIncorreta(req, res, next);
   } 
   else if (error instanceof mongoose.Error.ValidationError) {
-    let mensagensErro = "";
-    for (let erro in error.errors) {
-      mensagensErro += `${error.errors[erro].message + "; "}`;
-    }
-    res.status(400).send({mensagem: `Os seguintes erros foram encontrados: ${mensagensErro}`, status: 400});
-    
+    erroValidacao(req, res, next, error);
   }else {
-    res.status(500).send({mensagem: "Erro interno do servidor.", status: 500});
+    erroBase(req, res, next);
   }
 }
 
