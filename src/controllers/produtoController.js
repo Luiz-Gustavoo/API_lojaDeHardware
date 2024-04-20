@@ -5,14 +5,16 @@ import requisicaoIncorreta from "../errors/RequisicaoIncorreta.js";
 const listarTodosProdutos = async (req, res, next) => {
   try {
 
-    let {pagina = 1, limite = 3} = req.query;
+    let {pagina = 1, limite = 3, ordenacao = "_id:-1"} = req.query;
 
     pagina = parseInt(pagina);
     limite = parseInt(limite);
 
+    let [campoOrdenacao, ordem] = ordenacao.split(":");
+
     if (pagina > 0 && limite > 0) {
-      const listaProdutos = await produto
-        .find()
+      const listaProdutos = await produto.find()
+        .sort({[campoOrdenacao] : ordem })
         .skip((pagina - 1) * limite)
         .limit(limite);
       
@@ -90,13 +92,19 @@ const deletarProduto = async (req, res, next) => {
 
 const listarProdutoPorFiltro = async (req, res, next) => {
   try {
-    let {pagina = 1, limite = 3} = req.query;
+    let {pagina = 1, limite = 3, ordenacao = "_id:-1"} = req.query;
+
+    pagina = parseInt(pagina);
+    limite = parseInt(limite);
+
+
+    let [campoOrdenacao, ordem] = ordenacao.split(":");
 
     const busca = await processaBusca(req.query);
 
     if ((busca !== null) && (pagina > 0 && limite > 0)) {
-      const produtoEncontrado = await produto
-        .find(busca)
+      const produtoEncontrado = await produto.find(busca)
+        .sort({[campoOrdenacao] : ordem})
         .skip((pagina - 1) * limite)
         .limit(limite);
 
