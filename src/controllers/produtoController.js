@@ -45,33 +45,6 @@ const listarProdutoPorId = async (req, res, next) => {
   }
 };
 
-const listarProdutoPorFiltro = async (req, res, next) => {
-  try {
-    const {nome, marca, categoria, minPreco, maxPreco} = req.query;
-
-    const busca = {};
-
-    if (nome) busca.nome = {$regex: nome, $options: "i"};
-    if (marca) busca.marca = {$regex: marca, $options: "i"};
-    if (categoria) busca.categoria = {$regex: categoria, $options: "i"};
-
-    if (minPreco || maxPreco) busca.preco = {};
-    if (minPreco) busca.preco.$gte = minPreco;
-    if (maxPreco) busca.preco.$lte = maxPreco;
-
-    const produtoEncontrado = await produto.find(busca);
-
-    if (produtoEncontrado.length !== 0) {
-      res.status(200).json(produtoEncontrado);
-    }
-    else {
-      naoEncontrado(req, res, next, "Produto não encontrado com esses filtros", 400);
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
 const cadastrarProduto = async (req, res, next) => {
   try {
     const novoProduto = await produto.create(req.body);
@@ -114,6 +87,45 @@ const deletarProduto = async (req, res, next) => {
     next(error);
   }
 };
+
+const listarProdutoPorFiltro = async (req, res, next) => {
+  try {
+    let {pagina = 1, limite = 3} = req.query;
+
+    const busca = await processaBusca(req.query);
+
+    if ((busca !== null) && (pagina > 0 && limite > 0)) {
+      const produtoEncontrado = await produto
+        .find(busca)
+        .skip((pagina - 1) * limite)
+        .limit(limite);
+
+      res.status(200).json(produtoEncontrado);
+
+    } else {
+      naoEncontrado(req, res, next, "Nenhum produto encontrado com base nesses filtros");
+    }
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+function processaBusca(parametros) {
+  const {nome, marca, categoria, minPreco, maxPreco} = parametros;
+
+  const busca = {};
+
+  if (nome) busca.nome = {$regex: nome, $options: "i"};
+  if (marca) busca.marca = {$regex: marca, $options: "i"};
+  if (categoria) busca.categoria = {$regex: categoria, $options: "i"};
+
+  if (minPreco || maxPreco) busca.preco = {};
+  if (minPreco) busca.preco.$gte = minPreco;
+  if (maxPreco) busca.preco.$lte = maxPreco;
+
+  return busca;
+}
 
 export default {
   listarTodosProdutos,
